@@ -1,0 +1,45 @@
+import random
+import string
+import math
+
+def generate_password(length=12):
+    if length < 6:
+        return "Error: La contraseña debe tener al menos 6 caracteres."
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def calculate_entropy(password):
+    unique_characters = 0
+    if any(c.islower() for c in password):
+        unique_characters += 26
+    if any(c.isupper() for c in password):
+        unique_characters += 26
+    if any(c.isdigit() for c in password):
+        unique_characters += 10
+    if any(c in string.punctuation for c in password):
+        unique_characters += len(string.punctuation)
+    entropy = math.log2(unique_characters ** len(password))
+    return entropy
+
+def assess_strength(entropy):
+    if entropy < 40:
+        return "Débil"
+    elif entropy < 60:
+        return "Moderada"
+    else:
+        return "Fuerte"
+
+try:
+    length = int(input("Ingrese la longitud deseada de la contraseña (mínimo 6 caracteres): "))
+    if length < 6:
+        print("Error: La longitud debe ser de al menos 6 caracteres.")
+    else:
+        password = generate_password(length)
+        entropy = calculate_entropy(password)
+        strength = assess_strength(entropy)
+        print("\nContraseña generada:", password)
+        print(f"Fuerza de la contraseña: {strength}")
+        print(f"Entropía: {entropy:.2f} bits")
+except ValueError:
+    print("Error: Por favor ingrese un número válido.")
