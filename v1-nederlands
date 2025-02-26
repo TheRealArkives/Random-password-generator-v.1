@@ -1,0 +1,45 @@
+import random
+import string
+import math
+
+def generate_password(length=12):
+    if length < 6:
+        return "Fout: Het wachtwoord moet minimaal 6 tekens lang zijn."
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def calculate_entropy(password):
+    unique_characters = 0
+    if any(c.islower() for c in password):
+        unique_characters += 26
+    if any(c.isupper() for c in password):
+        unique_characters += 26
+    if any(c.isdigit() for c in password):
+        unique_characters += 10
+    if any(c in string.punctuation for c in password):
+        unique_characters += len(string.punctuation)
+    entropy = math.log2(unique_characters ** len(password))
+    return entropy
+
+def assess_strength(entropy):
+    if entropy < 40:
+        return "Zwak"
+    elif entropy < 60:
+        return "Gemiddeld"
+    else:
+        return "Sterk"
+
+try:
+    length = int(input("Voer de gewenste lengte van het wachtwoord in (minimaal 6 tekens): "))
+    if length < 6:
+        print("Fout: De lengte moet minimaal 6 tekens zijn.")
+    else:
+        password = generate_password(length)
+        entropy = calculate_entropy(password)
+        strength = assess_strength(entropy)
+        print("\nGegenereerd wachtwoord:", password)
+        print(f"Wachtwoordsterkte: {strength}")
+        print(f"Entropie: {entropy:.2f} bits")
+except ValueError:
+    print("Fout: Voer een geldig nummer in.")
