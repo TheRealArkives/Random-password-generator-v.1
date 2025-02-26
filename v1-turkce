@@ -1,0 +1,45 @@
+import random
+import string
+import math
+
+def generate_password(length=12):
+    if length < 6:
+        return "Hata: Şifre en az 6 karakter uzunluğunda olmalıdır."
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def calculate_entropy(password):
+    unique_characters = 0
+    if any(c.islower() for c in password):
+        unique_characters += 26
+    if any(c.isupper() for c in password):
+        unique_characters += 26
+    if any(c.isdigit() for c in password):
+        unique_characters += 10
+    if any(c in string.punctuation for c in password):
+        unique_characters += len(string.punctuation)
+    entropy = math.log2(unique_characters ** len(password))
+    return entropy
+
+def assess_strength(entropy):
+    if entropy < 40:
+        return "Zayıf"
+    elif entropy < 60:
+        return "Orta"
+    else:
+        return "Güçlü"
+
+try:
+    length = int(input("İstenen şifre uzunluğunu girin (en az 6 karakter): "))
+    if length < 6:
+        print("Hata: Uzunluk en az 6 karakter olmalıdır.")
+    else:
+        password = generate_password(length)
+        entropy = calculate_entropy(password)
+        strength = assess_strength(entropy)
+        print("\nÜretilen Şifre:", password)
+        print(f"Şifre Gücü: {strength}")
+        print(f"Entropi: {entropy:.2f} bit")
+except ValueError:
+    print("Hata: Lütfen geçerli bir sayı girin.")
